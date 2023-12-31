@@ -1,0 +1,50 @@
+#+title: readme
+
+* Using Go in C
+Init a go project.
+#+begin_src shell
+  go mod init go2c
+#+end_src
+
+Create a go2c.go file.
+#+begin_src go
+  package main
+
+  import "C"
+
+  //export HelloFromGo
+  func HelloFromGo() C.int {
+        print("hello from go\n")
+        return 69
+  }
+
+  func main() {
+
+  }
+#+end_src
+
+We need to have an empty main function in the main package.
+
+In Go, we use a commend like syntax to export symbol name. Be careful,
+there should be no space between // and export.
+
+We now use this command to build.
+#+begin_src shell
+  go build -o libgo2c.a -buildmode=c-archive *.go
+#+end_src
+
+We have two choice of buildmode, c-archive or c-shared. I personally
+like to use a static library, so the .a is used.
+
+If you want to use a shared library.
+#+begin_src shell
+  go build -o libgo2c.so -buildmode=c-shared *.go
+#+end_src
+
+For more, refer to the makefile.
+
+* Binary size
+If you use dynamic library, the binary size would be the smallest. But
+if you use static library, even this is only a hello world, the binary
+size is about 3MB, which is not small. This is mainly because you have
+to pack the Go runtime into your binary.
