@@ -1,0 +1,27 @@
+#+title: readme
+
+Using C++ in C is simple.
+
+* Create a static library
+#+begin_src shell
+  clang++ -c cpp2c.cc
+  ar rvs libcpp2c.a cpp2c.o
+#+end_src
+
+Copy the static library to the lib directory. However, the c++ code
+are very likely to use some c++ runtime function, we need to also link
+the -lstdc++ when compiling the C code.
+
+* Using libc++ instead of libstdc++
+The libstdc++ is provided by GCC. We now have an option of using
+libc++ provided by llvm.
+
+The key to successfully link the static library to your c executable
+is consistency. If you are using libstdc++, keep using it.
+
+https://libcxx.llvm.org/UsingLibcxx.html
+#+begin_src shell
+  clang++ -stdlib=libc++ -c cpp2c.cc
+#+end_src
+
+When compiling C code, link with -lc++.
