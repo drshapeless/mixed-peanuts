@@ -1,0 +1,58 @@
+#+title: readme
+
+Using Zig in C is possible and simple, but if you take a moment to
+think, it doesn't make sense. Zig is created as a C successor,
+anything C can do, Zig can do it better. Sometimes people say it is
+true for most modern languages, even including C++. I don't think so.
+
+For example, Rust is what we call a system language, it runs fast,
+does not have a runtime. If you intend to use Rust as a C replacement,
+good luck with the ownership. C++ on the other hand can directly use
+C, but this language is such a mess that now it has become a
+meme. Newer features are making this language a pile of unobservable
+matters.
+
+The only useful part of using Zig in C is to use Zig in other
+languages.
+
+* Compiler
+You can choose betwen a C compiler or use Zig as your C compiler. zig
+cc is a drop in replacement for the C compiler.
+
+If you are using clang, I recommend you just use zig cc as your C
+compiler. It will save a lot of headache.
+
+** zig cc
+#+begin_src shell
+  zig cc -o mixed-peanuts main.o -L zigout/lib llzig2c
+#+end_src
+
+In this way, you need to change nothing in the build.zig file. The
+program will run.
+
+The binary size is slightly bigger in this case. In my little
+investigation, zig cc may ship the zig compiler runtime with the
+binary.
+
+** clang
+#+begin_src shell
+  clang -o mixed-peanuts main.o -L zigout/lib llzig2c
+#+end_src
+
+When compiling, the program will complain about something like this.
+#+begin_example
+ld: warning: object file (/Users/jacky/code/mixed-peanuts/zig2c/main.o) was built for newer 'macOS' version (14.2.1) than being linked (14.0)
+ld: warning: object file (zig-out/lib/libzig2c.a[2](/Users/jacky/code/mixed-peanuts/zig2c/zig-cache/o/34aa9400fa626df32a10706b12cba186/libzig2c.a.o)) was built for newer 'macOS' version (14.2.1) than being linked (14.0)
+#+end_example
+
+To solve this, we have to change an environment variable. You may put
+this at the top of your makefile
+#+begin_src shell
+  export MACOSX_DEPLOYMENT_TARGET=14.2.1
+#+end_src
+
+Also, on Linux machine, you have to modify the build.zig file.
+#+begin_src zig
+  lib.bundle_compiler_rt = true;
+  lib.linkLibC();
+#+end_src
