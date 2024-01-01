@@ -5,23 +5,20 @@ LIBS = -pthread -lgo2c
 OBJECTS = main.o
 
 # All linked library would be static, including libc
-static_peanuts: build_static_lib $(OBJECTS)
-	$(CC) -static $(OBJECTS) -o static-peanuts $(LDFLAGS) $(LIBS)
+static_peanuts: libgo2c.a $(OBJECTS)
+	$(CC) $(OBJECTS) -o mixed-peanuts-static $(LDFLAGS) $(LIBS)
 
-static_go_peanuts: build_static_lib $(OBJECTS)
-	$(CC) $(OBJECTS) -o static-go-peanuts $(LDFLAGS) -pthread libgo2c.a
-
-dynamic_peanuts: build_dynamic_lib $(OBJECTS)
-	$(CC) $(OBJECTS) -o dynamic-peanuts $(LDFLAGS) $(LIBS)
+dynamic_peanuts: libgo2c.so $(OBJECTS)
+	$(CC) $(OBJECTS) -o mixed-peanuts-dynamic $(LDFLAGS) $(LIBS)
 
 main.o:
 
-build_static_lib:
+libgo2c.a:
 	go build -o libgo2c.a -buildmode=c-archive *.go
 
-build_dynamic_lib:
+libgo2c.so:
 	go build -o libgo2c.so -buildmode=c-shared *.go
 
 .PHONY: clean
 clean:
-	-rm -f $(OBJECTS) libgo2c.a libgo2c.h libgo2c.so static-peanuts static-go-peanuts dynamic-peanuts
+	-rm -f $(OBJECTS) libgo2c.a libgo2c.h libgo2c.so mixed-peanuts-static mixed-peanuts-dynamic
