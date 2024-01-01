@@ -3,10 +3,10 @@ LDFLAGS = -L target/release/
 LIBS = -lrust2c
 OBJECTS = main.o
 
-mixed-peanuts: build_static_lib $(OBJECTS)
+mixed-peanuts: librust2c.a $(OBJECTS)
 	$(CC) -o mixed-peanuts $(OBJECTS) $(LDFLAGS) $(LIBS)
 
-build_static_lib:
+librust2c.a:
 	cargo build --release
 
 main.o:
