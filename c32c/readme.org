@@ -1,0 +1,87 @@
+#+title: readme
+
+Calling C3 code to C is simple, but compling it requires some effort.
+
+We have two way to do this.
+
+* Init a C3 project
+#+begin_src shell
+  c3c init mixing
+#+end_src
+
+In project.json, comment out the c-source line.
+#+begin_src json
+  "c-sources": ["csource/**"],
+#+end_src
+
+Add a line and set no-entry to true. This allows the c3 compiler to
+compile c3 files without the main function.
+#+begin_src json
+  "no-entry": true,
+#+end_src
+
+Add a csource directory.
+#+begin_src shell
+  mkdir csource
+#+end_src
+
+The trick is that, the main function can be in the c source files
+instead of c3 source files.
+
+We have our main in main.c in csource.
+#+begin_src c
+  extern void test_print();
+
+  int main(int argc, char *argv[]) {
+      test_print();
+      return 0;
+  }
+#+end_src
+
+Rename main.c3 in src to lib.c3
+#+begin_src c3-ts
+  module mixing;
+  import std::io;
+
+  fn void test_print() @export("test_print") {
+      io::printn("Hello from C3");
+  }
+#+end_src
+
+* Directly using the compiler
+Compile into objects, this will pollute the working directory. A lot
+of IMO irrelevant objects are created.
+#+begin_src shell
+  c3c compile-only lib.c3
+  clang -o mixed-peanuts main.c *.o
+#+end_src
+
+Compile into library. This will produce a lib.a. This is cleaner.
+#+begin_src shell
+  c3c static-lib lib.c3
+  clang -o mixed-peanuts main.c lib.a
+#+end_src
+
+C3 can also generate a C header. We have a lib.h for c file to include.
+#+begin_src shell
+  c3c headers lib.c3
+#+end_src
+
+* In C3 file
+Use the @export to export function. @extern does not work for unused
+function inside C3. @export guarantee it is available.
+#+begin_src c3-ts
+  fn void test_print() @export("test_print") {
+      io::printn("Hello from C3");
+  }
+#+end_src
+
+In C file.
+#+begin_src c
+  #include "lib.h"
+
+  int main() {
+      test_print();
+      return 0;
+  }
+#+end_src

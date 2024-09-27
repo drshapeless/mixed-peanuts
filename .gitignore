@@ -2,3 +2,4 @@
 /zig2c/zig-cache/
 /zig2c/zig-out/
 *.o
+/c32c/mixing/build/
