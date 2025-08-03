@@ -2,37 +2,23 @@
 
 This repo aims at collecting the ways to mix languages together.
 
-* Export to C
-Most serious languages can be exported to C, thus be used by most of
-the languages. Also, they can utilize existing C code pretty easily.
+The base idea is to export or import a C foreign function interface
+(FFI). Either by generating some object files, or create a library,
+static or shared.
 
-Here is some languages I considered as serious.
-- Rust
-- Go
-- C++
-- Zig
+* Compile C as object
+This is very simple. Just use the -c flag. The -fPIC flag is for
+generating position independent code.
+#+begin_src shell
+  cc -c -fPIC shapeless.c
+#+end_src
 
+* Compile C as library
+We have the object. We use ~.so~ in Linux and ~.dylib~ in macOS.
+#+begin_src shell
+  # static
+  ar rvs libshapeless.a shapeless.o
 
-Languages that doesn't even have a type system is no in consideration.
-
-* Consume from C
-There are a lot of consumer in C, mostly scripting languages.
-
-Here are some languages I considered as consumer only.
-- Python
-- Elisp
-- Swift
-
-
-Swift has an interesting position here. By design, it has a complete
-type system, and is possible to export a C interface, but I still
-consider it as a consumer only language. Since Swift is only used
-extensively at creating Apple applications, and is mainly used for
-creating UI, any serious code that you think should be portable and
-can be reused by other things should not be written in Swift. Instead,
-you should write in other language and bridge it into Swift.
-
-Another possible consumer is JavaScript. However, considering the use
-scenarios of JavaScript, unless something can easily wasm, using it
-with JavaScript is a pain in the ass. Also, most modern languages can
-directly output wasm, thus no need for converting them in C.
+  # shared
+  cc -shared -o libshapeless.so shapeless.o
+#+end_src

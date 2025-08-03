@@ -1,0 +1,43 @@
+#+title: readme
+
+C++ is by far the easiest language to use with C. We have two ways to
+use the C code, one is to use the C++ compiler to compile the C code,
+another one is to use the C code as library or object.
+
+I suggest to always avoid compiling C code with C++ compiler, the
+mangling of function name will drive you crazy.
+
+* Use object
+#+begin_src shell
+  clang++ ../shapeless.o main.cc -o mixed
+#+end_src
+
+* Use static library
+#+begin_src shell
+  clang++ ../libshapeless.a main.cc -o mixed
+#+end_src
+
+Both object and static library is almost the same thing, the
+executable is around 16K.
+
+* Use shared library
+With shared library is a bit tricky. Because the program needs to know
+the path to library at run time. Usually we do it by modifying the
+~LD_LIBRARY_PATH~, but in our case, we don't want to touch it.
+
+We can use -rpath to embeded the path to dynamic library to the
+program. Like this. But rpath should always be an absolute path
+instead of a relative path for max portability.
+#+begin_src shell
+  clang++ main.cc -o cpp -lshapeless -L.. -Wl,-rpath=".."
+#+end_src
+
+* Use cpp in C
+We need the extern "C" tag before any function defined, link libc++
+with the program and we are done. We are using C++23 because I use the
+new std::print function.
+
+#+begin_src shell
+  clang++ -std=c++23 -c -fPIC slcpp.cc
+  clang main.c slcpp.o -o peanuts -lstdc++
+#+end_src
