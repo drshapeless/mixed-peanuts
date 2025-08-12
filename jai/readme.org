@@ -1,0 +1,47 @@
+#+title: readme
+
+The biggest obstacle of using C in Jai is to get a Jai compiler. And
+if you already have one. You probably can figure out how to run C in
+Jai on your own.
+
+Here, instead, I would dive into how to generate C binding using the
+Jai library.
+
+* Module
+First, create a module for your library. I call it shapeless.
+
+The directory tree looks like this.
+
+├── modules
+│   └── shapeless
+│       ├── generate.jai
+│       ├── lib
+│       │   └── libshapeless.so
+│       ├── module.jai
+│       ├── shapeless.jai
+│       └── sources
+│           ├── shapeless.c
+│           └── shapeless.h
+
+
+The ~generate.jai~ generate ~shapeless.jai~ and ~libshapeless.so~.
+
+Go to shapeless module root and run this.
+#+begin_src shell
+  jai generate.jai
+#+end_src
+
+* Building
+In Jai, we uses Jai to instruct our compiler how to compile. Similar
+to Zig, but I believe Jai is the pioneer of using the same language to
+do compilation configuration.
+
+By convention, we use ~first.jai~.
+
+#+begin_src shell
+  jai first.jai
+#+end_src
+
+That is it, no linking, no makefile.
+
+I hope for a faster public release of Jai.
