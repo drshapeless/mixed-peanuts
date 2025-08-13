@@ -33,7 +33,7 @@ OUTPUT_EXECUTABLE_NAME := "mixed-peanuts";
     compiler_end_intercept(w);
 
     #if OS == .MACOS {
-        copy_file("modules/shapeless/lib/libshapeless.dylib", "libshapeless.dylib");
+        copy_file("modules/shapeless/libshapeless.dylib", "libshapeless.dylib");
     }
 }
 
