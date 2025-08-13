@@ -36,10 +36,10 @@ In Jai, we uses Jai to instruct our compiler how to compile. Similar
 to Zig, but I believe Jai is the pioneer of using the same language to
 do compilation configuration.
 
-By convention, we use ~first.jai~.
+By convention, we use ~build.jai~.
 
 #+begin_src shell
-  jai first.jai
+  jai build.jai
 #+end_src
 
 That is it, no linking, no makefile.
